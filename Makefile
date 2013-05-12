@@ -1,8 +1,8 @@
 CC = g++
-CPPFLAGS = -g -Wall --std=c++11 -lboost_system -I/usr/include/boost
+CPPFLAGS = -g -Wall --std=c++11 -lboost_system -lboost_regex -I/usr/include/boost
 
-server: server.cc
-	$(CC) $(CPPFLAGS) server.cc -o site/server
+server: old_server.cc
+	$(CC) $(CPPFLAGS) old_server.cc -o site/server
 
 clean:
 	rm -f server
