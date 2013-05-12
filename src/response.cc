@@ -92,11 +92,10 @@ std::vector<boost::asio::const_buffer> response::to_buffers()
 {
 	std::vector<boost::asio::const_buffer> buffers;
 	buffers.push_back(status_strings::to_buffer(status));
-	for (std::size_t i = 0; i < headers.size(); ++i) {
-		header& h = headers[i];
-		buffers.push_back(boost::asio::buffer(h.first));
+	for (auto header:headers) {
+		buffers.push_back(boost::asio::buffer(header.first));
 		buffers.push_back(boost::asio::buffer(misc_strings::name_value_separator));
-		buffers.push_back(boost::asio::buffer(h.second));
+		buffers.push_back(boost::asio::buffer(header.second));
 		buffers.push_back(boost::asio::buffer(misc_strings::crlf));
 	}
 	buffers.push_back(boost::asio::buffer(misc_strings::crlf));
@@ -230,11 +229,8 @@ response response::default_resp(response::status_type status)
 	response resp;
 	resp.status = status;
 	resp.content = default_responses::to_string(status);
-	resp.headers.resize(2);
-	resp.headers[0].first = "Content-Length";
-	resp.headers[0].second = boost::lexical_cast<std::string>(resp.content.size());
-	resp.headers[1].first = "Content-Type";
-	resp.headers[1].second = "text/html";
+	resp.headers["Content-Length"] = boost::lexical_cast<std::string>(resp.content.size());
+	resp.headers["Content-Type"] = "text/html";
 	return resp;
 }
 

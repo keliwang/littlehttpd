@@ -1,17 +1,15 @@
 #ifndef __REQUEST_HANDLER_HPP__
 #define __REQUEST_HANDLER_HPP__
 
-#include "request.hpp"
 #include <boost/asio.hpp>
+#include "request.hpp"
+#include "response.hpp"
 
 namespace littlehttpd {
 
 class request_handler {
 public:
-	explicit request_handler();
-
-	void handle();
-private:
+	void handle_request(request& req, response& resp);
 };
 
 } /* littlehttpd  */ 

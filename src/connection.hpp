@@ -7,6 +7,7 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "request_handler.hpp"
+#include "request_parser.hpp"
 
 namespace littlehttpd {
 
@@ -29,6 +30,12 @@ public:
 	void stop();
 
 private:
+	// Read from socket
+	void handle_read();
+
+	// Write to socket
+	void handle_write();
+
 	// socket used by a connection object
 	boost::asio::ip::tcp::socket socket_;
 
@@ -37,6 +44,9 @@ private:
 
 	// response information
 	response response_;
+
+	// parser request
+	request_parser request_parser_;
 
 	// connection manager
 	connection_manager& connection_manager_;

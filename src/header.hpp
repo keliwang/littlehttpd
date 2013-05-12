@@ -7,7 +7,9 @@
 namespace littlehttpd {
 
 // A new type to save http header
-typedef std::pair<std::string, std::string> header;
+typedef std::pair<std::string, std::string> header_t;
+
+typedef std::map<std::string, std::string> headers_t;
 
 } // littlehttpd
 

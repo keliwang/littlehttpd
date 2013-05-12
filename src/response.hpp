@@ -30,7 +30,7 @@ struct response {
 	} status;
 
 	// The headers to be included in the response.
-	std::vector<header> headers;
+	headers_t headers;
 
 	// The content to be sent in the response.
 	std::string content;
