@@ -49,14 +49,7 @@ void request_parser::extract_headers(istringstream& header_lines_stream)
 		if (header_line == "\r")
 			break;
 
-		cout << "--------START------------" << endl;
-		cout << header_line << endl;
-
 		auto header_pair = extract_one_header(header_line);
-
-		cout << header_pair.first << ": " << header_pair.second << endl;
-		cout << "--------END-------------" << endl;
-
 		request_.headers.insert(header_pair);
 	}
 }
@@ -103,16 +96,18 @@ void request_parser::parser_content()
 
 	size_t content_length = stoul(request_.headers["Content-Length"]);
 
+	boost::system::error_code err;
 	boost::asio::read(socket_, buffer_,
-			boost::asio::transfer_exactly(content_length - buffer_.size()));
+			boost::asio::transfer_exactly(content_length - buffer_.size()), err);
+	if (err == boost::asio::error::eof) {
+		throw boost::system::system_error(err);
+	}
 	auto data = buffer_.data();
 	buffer_.consume(content_length);
 
 	request_.content = string(
 				boost::asio::buffers_begin(data),
 				boost::asio::buffers_begin(data) + content_length);
-
-	cout << request_.content << endl;
 }
 
 } /* littlehttpd  */ 

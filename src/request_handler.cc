@@ -16,7 +16,22 @@ void request_handler::handle_request(request& req, response& resp)
 		return;
 	}
 
-	ifstream is(req.uri.substr(1), ios::in | ios::binary);
+	if (req.method == "GET") {
+		handle_get(req, resp);
+	} else if (req.method == "POST") {
+		handle_post(req, resp);
+	} else {
+		resp = response::default_resp(response::bad_request);
+	}
+
+}
+
+void request_handler::handle_get(request& req, response& resp)
+{
+	string request_path;
+	url_decode(req.uri, request_path);
+
+	ifstream is(request_path, ios::in | ios::binary);
 	if (!is) {
 		resp = response::default_resp(response::not_found);
 		return;
@@ -29,6 +44,23 @@ void request_handler::handle_request(request& req, response& resp)
 		resp.content.append(buf, is.gcount());
 	}
 	resp.headers["Content-Length"] = boost::lexical_cast<string>(resp.content.size());
+}
+
+void request_handler::handle_post(request& req, response& resp)
+{
+	cout << req.content << endl;
+	resp = response::default_resp(response::created);
+}
+
+void request_handler::url_decode(const string& in, string& out)
+{
+	out.clear();
+
+	if (in == "/") {
+		out.append("index.html");
+	} else {
+		out.append(in.substr(1));
+	}
 }
 
 } /* littlehttpd  */ 
