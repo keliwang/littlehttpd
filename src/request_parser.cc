@@ -77,7 +77,11 @@ header_t request_parser::extract_one_header(const string& header_line)
 
 string request_parser::read_until(string delim)
 {
-	auto length = boost::asio::read_until(socket_, buffer_, delim);
+	boost::system::error_code err;
+	auto length = boost::asio::read_until(socket_, buffer_, delim, err);
+	if (err && err != boost::asio::error::eof) {
+		throw boost::system::system_error(err);
+	}
 	//boost::asio::streambuf::const_buffers_type data = buffer_.data();
 	auto data = buffer_.data();
 	buffer_.consume(length);

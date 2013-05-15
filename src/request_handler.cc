@@ -1,6 +1,7 @@
-#include <string>
 #include <ios>
 #include <fstream>
+#include <iostream>
+#include <string>
 #include <boost/lexical_cast.hpp>
 #include "request_handler.hpp"
 
@@ -48,10 +49,29 @@ void request_handler::handle_get(request& req, response& resp)
 
 void request_handler::handle_post(request& req, response& resp)
 {
-	cout << req.content << endl;
+	if (is_upload_file(req.headers["Content-Type"])) {
+		handle_upload_file(req, resp);
+	} else {
+		cout << req.content;
+		cout.flush();
+		resp = response::default_resp(response::accepted);
+	}
+}
+
+void request_handler::handle_upload_file(request& req, response& resp)
+{
+	cout << req.content;
+	cout.flush();
 	resp = response::default_resp(response::created);
 }
 
+bool request_handler::is_upload_file(const string& content_type)
+{
+	if (content_type.find("multipart/form-data") == string::npos) {
+		return false;
+	}
+	return true;
+}
 void request_handler::url_decode(const string& in, string& out)
 {
 	out.clear();

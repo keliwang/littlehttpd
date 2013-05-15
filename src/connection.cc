@@ -1,4 +1,7 @@
 #include "connection.hpp"
+#include <exception>
+
+using namespace std;
 
 namespace littlehttpd {
 
@@ -33,7 +36,15 @@ void connection::stop()
 
 void connection::handle_read()
 {
-	request_parser_.parser();
+	try {
+		request_parser_.parser();
+	} catch (runtime_error& e) {
+		response_ = response::default_resp(response::bad_request);
+		return;
+	} catch(exception& e) {
+		response_ = response::default_resp(response::internal_server_error);
+		return;
+	}
 	request_handler_.handle_request(request_, response_);
 }
 

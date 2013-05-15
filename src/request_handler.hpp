@@ -14,9 +14,15 @@ public:
 private:
 	void handle_get(request& req, response& resp);
 	void handle_post(request& req, response& resp);
+	void handle_upload_file(request& req, response& resp);
+	bool is_upload_file(const std::string& content_type);
 	void url_decode(const std::string& in, std::string& out);
 };
 
-} /* littlehttpd  */ 
+namespace upload_helper {
+
+} // upload_helper
+
+} // littlehttpd
 
 #endif // __REQUEST_HANDLER_HPP__
