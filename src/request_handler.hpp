@@ -3,6 +3,7 @@
 
 #include <boost/asio.hpp>
 #include <string>
+#include <sstream>
 #include "request.hpp"
 #include "response.hpp"
 
@@ -20,6 +21,11 @@ private:
 };
 
 namespace upload_helper {
+	std::string get_boundary(const std::string& content_type);
+	bool save_file(std::string& content, const std::string& boundary);
+
+	std::string get_filename(const std::string& disposition);
+	void skip_n_lines(std::istringstream& iss, int n);
 
 } // upload_helper
 

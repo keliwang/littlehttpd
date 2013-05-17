@@ -2,41 +2,43 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 
+using namespace std;
+
 namespace littlehttpd {
 
 namespace status_strings {
 
-	const std::string ok =
+	const string ok =
 		"HTTP/1.0 200 OK\r\n";
-	const std::string created =
+	const string created =
 		"HTTP/1.0 201 Created\r\n";
-	const std::string accepted =
+	const string accepted =
 		"HTTP/1.0 202 Accepted\r\n";
-	const std::string no_content =
+	const string no_content =
 		"HTTP/1.0 204 No Content\r\n";
-	const std::string multiple_choices =
+	const string multiple_choices =
 		"HTTP/1.0 300 Multiple Choices\r\n";
-	const std::string moved_permanently =
+	const string moved_permanently =
 		"HTTP/1.0 301 Moved Permanently\r\n";
-	const std::string moved_temporarily =
+	const string moved_temporarily =
 		"HTTP/1.0 302 Moved Temporarily\r\n";
-	const std::string not_modified =
+	const string not_modified =
 		"HTTP/1.0 304 Not Modified\r\n";
-	const std::string bad_request =
+	const string bad_request =
 		"HTTP/1.0 400 Bad Request\r\n";
-	const std::string unauthorized =
+	const string unauthorized =
 		"HTTP/1.0 401 Unauthorized\r\n";
-	const std::string forbidden =
+	const string forbidden =
 		"HTTP/1.0 403 Forbidden\r\n";
-	const std::string not_found =
+	const string not_found =
 		"HTTP/1.0 404 Not Found\r\n";
-	const std::string internal_server_error =
+	const string internal_server_error =
 		"HTTP/1.0 500 Internal Server Error\r\n";
-	const std::string not_implemented =
+	const string not_implemented =
 		"HTTP/1.0 501 Not Implemented\r\n";
-	const std::string bad_gateway =
+	const string bad_gateway =
 		"HTTP/1.0 502 Bad Gateway\r\n";
-	const std::string service_unavailable =
+	const string service_unavailable =
 		"HTTP/1.0 503 Service Unavailable\r\n";
 
 	boost::asio::const_buffer to_buffer(response::status_type status)
@@ -88,9 +90,20 @@ namespace misc_strings {
 
 } // namespace misc_strings
 
-std::vector<boost::asio::const_buffer> response::to_buffers()
+void push_server_name(vector<boost::asio::const_buffer>& resp_buf)
 {
-	std::vector<boost::asio::const_buffer> buffers;
+	const string server("Server");
+	const string server_version("Littlehttpd/1.0");
+
+	resp_buf.push_back(boost::asio::buffer(server));
+	resp_buf.push_back(boost::asio::buffer(misc_strings::name_value_separator));
+	resp_buf.push_back(boost::asio::buffer(server_version));
+	resp_buf.push_back(boost::asio::buffer(misc_strings::crlf));
+}
+
+vector<boost::asio::const_buffer> response::to_buffers()
+{
+	vector<boost::asio::const_buffer> buffers;
 	buffers.push_back(status_strings::to_buffer(status));
 	for (auto header:headers) {
 		buffers.push_back(boost::asio::buffer(header.first));
@@ -98,6 +111,7 @@ std::vector<boost::asio::const_buffer> response::to_buffers()
 		buffers.push_back(boost::asio::buffer(header.second));
 		buffers.push_back(boost::asio::buffer(misc_strings::crlf));
 	}
+	push_server_name(buffers);
 	buffers.push_back(boost::asio::buffer(misc_strings::crlf));
 	buffers.push_back(boost::asio::buffer(content));
 	return buffers;
@@ -182,7 +196,7 @@ namespace default_responses {
 		"<body><h1>503 Service Unavailable</h1></body>"
 		"</html>";
 
-	std::string to_string(response::status_type status)
+	string to_string(response::status_type status)
 	{
 		switch (status) {
 			case response::ok:
@@ -229,7 +243,7 @@ response response::default_resp(response::status_type status)
 	response resp;
 	resp.status = status;
 	resp.content = default_responses::to_string(status);
-	resp.headers["Content-Length"] = boost::lexical_cast<std::string>(resp.content.size());
+	resp.headers["Content-Length"] = boost::lexical_cast<string>(resp.content.size());
 	resp.headers["Content-Type"] = "text/html";
 	return resp;
 }

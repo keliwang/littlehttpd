@@ -56,7 +56,7 @@ void request_parser::extract_headers(istringstream& header_lines_stream)
 
 header_t request_parser::extract_one_header(const string& header_line)
 {
-	string splitter(": ");
+	const string splitter(": ");
 
 	auto splitter_pos = header_line.find(splitter);
 	if (splitter_pos == string::npos) {
