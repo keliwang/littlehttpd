@@ -2,7 +2,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <exception>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 #include "request_handler.hpp"
 
 using namespace std;
@@ -123,7 +125,14 @@ namespace upload_helper {
 		// So, end_boundary's length is boundary.size() + 6
 		long end_boundary_len = boundary.size() + 6;
 
-		ofstream output_file(filename, ios::out | ios::binary);
+		const string upload_dir("upload");
+		if (!prepare_upload_dir(upload_dir)) {
+			throw runtime_error("Create upload directory fail");
+		}
+
+		const boost::filesystem::path upload_file_path = 
+				boost::filesystem::path(upload_dir) / boost::filesystem::path(filename);
+		ofstream output_file(upload_file_path.c_str(), ios::out | ios::binary);
 		if (!output_file) {
 			return false;
 		}
@@ -153,6 +162,25 @@ namespace upload_helper {
 			string discard_str;
 			getline(iss, discard_str);
 		}
+	}
+
+	bool prepare_upload_dir(std::string path)
+	{
+		boost::filesystem::path upload_path(path);
+
+		// If upload directory already exsits, return true
+		if (boost::filesystem::exists(upload_path)) {
+			return true;
+		}
+
+		// Create upload directory now
+		try {
+			boost::filesystem::create_directory(upload_path);
+		} catch (exception& e) {
+			return false;
+		}
+
+		return true;
 	}
 
 } // upload_helper

@@ -26,6 +26,7 @@ namespace upload_helper {
 
 	std::string get_filename(const std::string& disposition);
 	void skip_n_lines(std::istringstream& iss, int n);
+	bool prepare_upload_dir(std::string path);
 
 } // upload_helper
 

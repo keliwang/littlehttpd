@@ -1,5 +1,5 @@
 CC=g++
-CXXFLAGS=-g -Wall -std=c++11 -lboost_system -I/usr/include/boost
+CXXFLAGS=-g -Wall -std=c++11 -lboost_system -lboost_filesystem -I/usr/include/boost
 
 main: server.o connection.o request_handler.o connection_manager.o request_parser.o response.o main.o
 	$(CC) $(CXXFLAGS) server.o connection.o request_handler.o connection_manager.o request_parser.o response.o main.o -o main
