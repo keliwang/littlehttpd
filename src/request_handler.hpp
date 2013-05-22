@@ -17,8 +17,14 @@ private:
 	void handle_post(request& req, response& resp);
 	void handle_upload_file(request& req, response& resp);
 	bool is_upload_file(const std::string& content_type);
-	void url_decode(const std::string& in, std::string& out);
 };
+
+namespace http_get_helper {
+	void handle_get_dir(std::string req_path, response& resp);
+	void handle_get_file(std::string req_path, response& resp);
+	void list_directory(std::string req_path, response& resp);
+	bool url_decode(const std::string& in, std::string& out);
+} // http_get_helper
 
 namespace upload_helper {
 	std::string get_boundary(const std::string& content_type);
